@@ -125,7 +125,7 @@ def visualize_tweets_on_map(filtered_data, selected_date_range):
     if len(filtered_data) == 0:
         st.markdown("No orders within the selected date range.")
     else:
-        st.markdown("%i delivervy locations from %s to %s" % (len(filtered_data), 
+        st.markdown("%i delivery locations from %s to %s" % (len(filtered_data), 
                                                   start_date.strftime('%Y-%m-%d'), 
                                                   end_date.strftime('%Y-%m-%d')))
 
