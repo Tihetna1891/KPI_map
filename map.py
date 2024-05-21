@@ -115,20 +115,20 @@ def visualize_completion_time(df, selected_date_range):
 def visualize_tweets_on_map(filtered_data, selected_date_range):
     start_date, end_date = selected_date_range
     
-    # Filter DataFrame for tweets within the selected date range
-    # filtered_data = df[(df['created_at'].dt.date >= start_date) & 
-    #                    (df['created_at'].dt.date <= end_date) & 
-    #                    (df['status'] == 'COMPLETED')]
+     # Filter DataFrame for tweets within the selected date range
+    filtered_data = filtered_data[(filtered_data['created_at'].dt.date >= start_date) & 
+                       (filtered_data['created_at'].dt.date <= end_date) ]
     # filtered_data = df1[df1['id'].isin(filtered_data['location_id'].unique())]
     
-    st.markdown("### Delivery tracks distribution based on the selected date range")
+    st.markdown("### Delivery locations distribution based on the selected date range")
     
     if len(filtered_data) == 0:
         st.markdown("No orders within the selected date range.")
     else:
-        st.markdown("%i orders from %s to %s" % (len(filtered_data), 
+        st.markdown("%i delivervy locations from %s to %s" % (len(filtered_data), 
                                                   start_date.strftime('%Y-%m-%d'), 
                                                   end_date.strftime('%Y-%m-%d')))
+
         
         if len(filtered_data) > 0:
             center_lat = filtered_data['latitude'].mean()
