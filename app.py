@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import matplotlib.pyplot as plt
-import folium
+# import folium
 from streamlit_folium import folium_static
 import requests
 import sys
