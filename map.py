@@ -16,35 +16,52 @@ def convert_google_sheet_url(url):
     new_url = re.sub(pattern, replacement, url)
     return new_url
 @st.cache_data
-def calculate_time_frame(df, selected_date_range, selected_time_frame):
-    """
-    Calculate the time frame column based on the selected time frame.
-
-    Args:
-        df: DataFrame containing the data.
-        selected_date_range: Tuple containing the start and end dates of the selected date range.
-        selected_time_frame: String representing the selected time frame ('daily', 'weekly', 'monthly', 'yearly').
-
-    Returns:
-        DataFrame with the 'time_frame' column added.
-    """
+def calculate_time_frame(df, selected_date_range, time_frame):
     start_date, end_date = selected_date_range
-
-    if selected_time_frame == 'daily':
-        df['time_frame'] = df['created_at'].dt.date
-    elif selected_time_frame == 'weekly':
-        df['time_frame'] = df['created_at'].dt.to_period('W').apply(lambda r: r.start_time)
-    elif selected_time_frame == 'monthly':
-        df['time_frame'] = df['created_at'].dt.to_period('M').apply(lambda r: r.start_time)
-    elif selected_time_frame == 'yearly':
-        df['time_frame'] = df['created_at'].dt.to_period('Y').apply(lambda r: r.start_time)
+    filtered_df = df[(df['created_at'].dt.date >= start_date) & 
+                     (df['created_at'].dt.date <= end_date)]
+    
+    if time_frame == 'daily':
+        resampled_df = filtered_df.set_index('created_at').resample('D').count().reset_index()
+    elif time_frame == 'weekly':
+        resampled_df = filtered_df.set_index('created_at').resample('W').count().reset_index()
+    elif time_frame == 'monthly':
+        resampled_df = filtered_df.set_index('created_at').resample('M').count().reset_index()
+    elif time_frame == 'yearly':
+        resampled_df = filtered_df.set_index('created_at').resample('Y').count().reset_index()
     else:
         raise ValueError("Invalid time frame. Choose from 'daily', 'weekly', 'monthly', or 'yearly'.")
+    
+    return resampled_df
+# def calculate_time_frame(df, selected_date_range, selected_time_frame):
+#     """
+#     Calculate the time frame column based on the selected time frame.
 
-    # Filter DataFrame based on selected date range
-    df = df[(df['created_at'] >= start_date) & (df['created_at'] <= end_date)]
+#     Args:
+#         df: DataFrame containing the data.
+#         selected_date_range: Tuple containing the start and end dates of the selected date range.
+#         selected_time_frame: String representing the selected time frame ('daily', 'weekly', 'monthly', 'yearly').
 
-    return df
+#     Returns:
+#         DataFrame with the 'time_frame' column added.
+#     """
+#     start_date, end_date = selected_date_range
+
+#     if selected_time_frame == 'daily':
+#         df['time_frame'] = df['created_at'].dt.date
+#     elif selected_time_frame == 'weekly':
+#         df['time_frame'] = df['created_at'].dt.to_period('W').apply(lambda r: r.start_time)
+#     elif selected_time_frame == 'monthly':
+#         df['time_frame'] = df['created_at'].dt.to_period('M').apply(lambda r: r.start_time)
+#     elif selected_time_frame == 'yearly':
+#         df['time_frame'] = df['created_at'].dt.to_period('Y').apply(lambda r: r.start_time)
+#     else:
+#         raise ValueError("Invalid time frame. Choose from 'daily', 'weekly', 'monthly', or 'yearly'.")
+
+#     # Filter DataFrame based on selected date range
+#     df = df[(df['created_at'] >= start_date) & (df['created_at'] <= end_date)]
+
+#     return df
        
 
 
