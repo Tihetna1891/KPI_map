@@ -212,92 +212,92 @@ with tab1:
     #     st.plotly_chart(fig_0)
 
 
-with tab2:
+# with tab2:
   
-    # Read CSV data (replace with your actual path)
-    df = pd.read_csv('C:/Users/dell/OneDrive/Desktop/orders.csv')
+#     # Read CSV data (replace with your actual path)
+#     df = pd.read_csv('C:/Users/dell/OneDrive/Desktop/orders.csv')
 
-    # Assuming invalid times have a specific format (e.g., hours above 23)
-    # Assuming 'created_at' is a string column containing time values
-    valid_df = df[df['created_at'].apply(is_valid_time)]  # Apply validation function
+#     # Assuming invalid times have a specific format (e.g., hours above 23)
+#     # Assuming 'created_at' is a string column containing time values
+#     valid_df = df[df['created_at'].apply(is_valid_time)]  # Apply validation function
 
-    # Optional: Assign filtered data to a new DataFrame
-    df = valid_df.copy()
-    # Handle invalid times using errors argument in to_datetime
-    df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')  # Replace invalid with NaT
+#     # Optional: Assign filtered data to a new DataFrame
+#     df = valid_df.copy()
+#     # Handle invalid times using errors argument in to_datetime
+#     df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')  # Replace invalid with NaT
 
-    # df_filtered = df[~df['created_at'].str.contains("30:")]  # Filter out rows with "30:" in time (optional)
-    # df = df_filtered.copy()  # Uncomment if you want to keep filtered data
+#     # df_filtered = df[~df['created_at'].str.contains("30:")]  # Filter out rows with "30:" in time (optional)
+#     # df = df_filtered.copy()  # Uncomment if you want to keep filtered data
 
 
-    # Assuming invalid times have a specific format (e.g., hours above 23)
-    # df_filtered = df[~df['created_at'].str.contains("30:")]  # Filter out rows with "30:" in time
-    # df = df_filtered.copy()  # Assign filtered data to a new DataFrame (optional)
+#     # Assuming invalid times have a specific format (e.g., hours above 23)
+#     # df_filtered = df[~df['created_at'].str.contains("30:")]  # Filter out rows with "30:" in time
+#     # df = df_filtered.copy()  # Assign filtered data to a new DataFrame (optional)
 
-    # # Assuming you can adjust hours within a reasonable range (e.g., -12 to 12)
-    # df['created_at'] = pd.to_timedelta('09:00:00') + pd.to_timedelta(df['created_at'])  # Assuming invalid hours differ by a constant offset
+#     # # Assuming you can adjust hours within a reasonable range (e.g., -12 to 12)
+#     # df['created_at'] = pd.to_timedelta('09:00:00') + pd.to_timedelta(df['created_at'])  # Assuming invalid hours differ by a constant offset
 
-    # Handle invalid times using errors argument in to_datetime
-    # df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')  # Replace invalid with NaT
+#     # Handle invalid times using errors argument in to_datetime
+#     # df['created_at'] = pd.to_datetime(df['created_at'], errors='coerce')  # Replace invalid with NaT
 
-    # Assuming 'created_at' is now (mostly) a datetime column
-    df['month'] = df['created_at'].dt.month_name()
-    month_names = df['month'].unique()  # Get unique month names for x-axis ticks
+#     # Assuming 'created_at' is now (mostly) a datetime column
+#     df['month'] = df['created_at'].dt.month_name()
+#     month_names = df['month'].unique()  # Get unique month names for x-axis ticks
 
-    # Total received orders per month
-    total_received_per_month = df.groupby('month')['id'].count().reset_index()
+#     # Total received orders per month
+#     total_received_per_month = df.groupby('month')['id'].count().reset_index()
 
-    # Completed orders per month
-    completed_df = df[df['status'] == 'COMPLETED']  # Assuming 'Completed' indicates completion
-    completed_per_month = completed_df.groupby('month')['id'].count().reset_index()
+#     # Completed orders per month
+#     completed_df = df[df['status'] == 'COMPLETED']  # Assuming 'Completed' indicates completion
+#     completed_per_month = completed_df.groupby('month')['id'].count().reset_index()
 
-    # Convert DataFrames to dictionaries for Streamlit plotting (alternative approach)
-    total_received_dict = total_received_per_month.set_index('month')['id'].to_dict()
-    completed_dict = completed_per_month.set_index('month')['id'].to_dict()
+#     # Convert DataFrames to dictionaries for Streamlit plotting (alternative approach)
+#     total_received_dict = total_received_per_month.set_index('month')['id'].to_dict()
+#     completed_dict = completed_per_month.set_index('month')['id'].to_dict()
 
-    # Create charts (without plt.show())
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))  # Create a single figure with two subplots
+#     # Create charts (without plt.show())
+#     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))  # Create a single figure with two subplots
 
-    # Total received orders plot
-    ax1.bar(total_received_per_month['month'], total_received_per_month['id'])
-    ax1.set_title('Total Received Orders')
+#     # Total received orders plot
+#     ax1.bar(total_received_per_month['month'], total_received_per_month['id'])
+#     ax1.set_title('Total Received Orders')
 
-    # Completed orders plot
-    ax2.bar(completed_per_month['month'], completed_per_month['id'])
-    ax2.set_title('Completed Orders')
+#     # Completed orders plot
+#     ax2.bar(completed_per_month['month'], completed_per_month['id'])
+#     ax2.set_title('Completed Orders')
 
-    # Add trendline for total received orders
-    if total_received_dict and completed_dict:
-        # Check data types of dictionary values (assuming they might be strings or floats)
-        if any(not isinstance(v, (int, float)) for v in total_received_dict.values()):
-            st.warning("Total received order values contain non-numeric entries. Trendline omitted.")
-        else:
-            valid_months = [month for month in month_names if month in total_received_dict and month in completed_dict]
-            total_received_values = [total_received_dict.get(month, np.nan) for month in valid_months]
-            completed_values = [completed_dict.get(month, np.nan) for month in valid_months]  # Get completed values
-            slope, intercept, rvalue, _, _ = linregress(total_received_values, completed_values)
-            x = np.linspace(min(total_received_values), max(total_received_values))
-            y = slope * x + intercept
-            ax1.plot(x, y, color='red', linestyle='--')
+#     # Add trendline for total received orders
+#     if total_received_dict and completed_dict:
+#         # Check data types of dictionary values (assuming they might be strings or floats)
+#         if any(not isinstance(v, (int, float)) for v in total_received_dict.values()):
+#             st.warning("Total received order values contain non-numeric entries. Trendline omitted.")
+#         else:
+#             valid_months = [month for month in month_names if month in total_received_dict and month in completed_dict]
+#             total_received_values = [total_received_dict.get(month, np.nan) for month in valid_months]
+#             completed_values = [completed_dict.get(month, np.nan) for month in valid_months]  # Get completed values
+#             slope, intercept, rvalue, _, _ = linregress(total_received_values, completed_values)
+#             x = np.linspace(min(total_received_values), max(total_received_values))
+#             y = slope * x + intercept
+#             ax1.plot(x, y, color='red', linestyle='--')
 
-    # Add trendline for completed orders
-    if total_received_dict and completed_dict:
-        # Check data types of dictionary values (assuming they might be strings or floats)
-        if any(not isinstance(v, (int, float)) for v in completed_dict.values()):
-            st.warning("Completed order values contain non-numeric entries. Trendline omitted.")
-        else:
-            valid_months = [month for month in month_names if month in total_received_dict and month in completed_dict]
-            completed_values = list(completed_dict.values())
-            total_received_values = [total_received_dict.get(month, np.nan) for month in valid_months]  # Get total received values
-            slope, intercept, rvalue, _, _ = linregress(total_received_values, completed_values)
-            x = np.linspace(min(completed_values), max(completed_values))
-            y = slope * x + intercept
-            ax2.plot(x, y, color='blue', linestyle='--')
+#     # Add trendline for completed orders
+#     if total_received_dict and completed_dict:
+#         # Check data types of dictionary values (assuming they might be strings or floats)
+#         if any(not isinstance(v, (int, float)) for v in completed_dict.values()):
+#             st.warning("Completed order values contain non-numeric entries. Trendline omitted.")
+#         else:
+#             valid_months = [month for month in month_names if month in total_received_dict and month in completed_dict]
+#             completed_values = list(completed_dict.values())
+#             total_received_values = [total_received_dict.get(month, np.nan) for month in valid_months]  # Get total received values
+#             slope, intercept, rvalue, _, _ = linregress(total_received_values, completed_values)
+#             x = np.linspace(min(completed_values), max(completed_values))
+#             y = slope * x + intercept
+#             ax2.plot(x, y, color='blue', linestyle='--')
 
-    # Display plots in Streamlit
-    st.pyplot(fig)
-with tab3:
-    create_data_entry_form_and_return_csv()
+#     # Display plots in Streamlit
+#     st.pyplot(fig)
+# with tab3:
+#     create_data_entry_form_and_return_csv()
 
     
 
