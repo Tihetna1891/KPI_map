@@ -9,7 +9,7 @@ import requests
 import io
 import sys
 sys.path.append('../')
-from scripts.Loader import DataLoader
+# from scripts.Loader import DataLoader
 from map import *
 # def fetch_google_sheet_csv(url):
 #     try:
