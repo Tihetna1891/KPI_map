@@ -143,8 +143,8 @@ tab1, tab2, tab3 = st.tabs(["Daily Report", "Past Price Trend", "Data Entry Form
 with tab1:
     st.title("DASHBOARD")
     st.sidebar.title("SIDE BAR")
-    st.markdown(" This application is a Streamlit app used to analyze ChipChip & YAZZ KPI")
-    st.sidebar.markdown(" This application is a Streamlit app used to analyze KPI of ChipChip")
+    # st.markdown(" This application is a Streamlit app used to analyze ChipChip & YAZZ KPI")
+    # st.sidebar.markdown(" This application is a Streamlit app used to analyze KPI of ChipChip")
     # Convert 'created_at' to datetime and 'location' to a tuple of floats (latitude, longitude)
     filtered_data['created_at'] = pd.to_datetime(filtered_data['created_at'])
     df0['created_at'] = pd.to_datetime(df0['created_at'])
